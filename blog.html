@@ -14,17 +14,21 @@
         .nav-left { display: flex; align-items: center; gap: 20px; }
         .logo { font-size: 22px; font-weight: 700; color: #f97316; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
         .logo i { font-size: 28px; }
-        .nav-links { display: flex; gap: 18px; list-style: none; }
-        .nav-links a { text-decoration: none; color: #b0b0b0; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links { display: flex; gap: 18px; list-style: none; white-space: nowrap; }
+        .nav-links a { text-decoration: none; color: #b0b0b0; font-size: 14px; font-weight: 500; transition: color 0.2s; white-space: nowrap; }
         .nav-links a:hover { color: #f97316; }
         .nav-links a.active { color: #f97316; }
-        .nav-center { flex: 1; max-width: 500px; margin: 0 24px; }
-        .search-box { display: flex; align-items: center; background: #2a2a2a; border-radius: 8px; padding: 0 12px; height: 40px; border: 1px solid #444; transition: border-color 0.2s, background 0.2s; }
-        .search-box:focus-within { border-color: #f97316; background: #333; }
-        .search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: #e0e0e0; }
+        .nav-center { flex: 0; margin-left: auto; margin-right: 12px; }
+        .search-toggle { width: 40px; height: 40px; border-radius: 8px; background: #2a2a2a; border: 1px solid #444; color: #b0b0b0; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .search-toggle:hover { background: #333; border-color: #f97316; color: #f97316; }
+        .search-box { display: none; position: absolute; top: 64px; left: 50%; transform: translateX(-50%); width: 360px; background: #2a2a2a; border-radius: 8px; padding: 6px; border: 1px solid #444; z-index: 101; align-items: center; }
+        .search-box.open { display: flex; }
+        .search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: #e0e0e0; padding: 8px 10px; }
         .search-box input::placeholder { color: #666; }
-        .search-box button { border: none; background: #444; color: #b0b0b0; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-left: 8px; transition: all 0.2s; }
+        .search-box button { border: none; background: #444; color: #b0b0b0; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
         .search-box button:hover { background: #f97316; color: #fff; }
+        .search-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 100; }
+        .search-overlay.show { display: block; }
         .nav-right { display: flex; align-items: center; gap: 16px; }
         .nav-icon-btn { position: relative; cursor: pointer; color: #b0b0b0; font-size: 20px; transition: color 0.2s; }
         .nav-icon-btn:hover { color: #f97316; }
@@ -115,13 +119,13 @@
                     <li><a href="more.html">更多</a></li>
                 </ul>
             </div>
-            <div class="nav-center">
-                <div class="search-box">
-                    <input type="text" placeholder="搜索日志..." id="searchInput">
-                    <button onclick="doSearch()"><i class="fas fa-search"></i></button>
-                </div>
-            </div>
             <div class="nav-right">
+                <button class="search-toggle" id="searchToggle" title="搜索"><i class="fas fa-search"></i></button>
+                <div class="search-overlay" id="searchOverlay"></div>
+                <div class="search-box" id="searchBox">
+                    <input type="text" placeholder="搜索日志..." id="searchInput">
+                    <button onclick="doSearch()">搜索</button>
+                </div>
                 <div class="nav-icon-btn" onclick="showToast('消息中心')"><i class="fas fa-comment-dots"></i><span class="badge">99+</span></div>
                 <div class="nav-icon-btn" onclick="showToast('动态更新')"><i class="fas fa-bolt"></i><span class="badge">5</span></div>
                 <div class="nav-icon-btn" onclick="showToast('收藏夹')"><i class="fas fa-star"></i></div>
@@ -141,10 +145,6 @@
     </div>
 
     <div class="main-wrap">
-        <div class="section-header">
-            <div class="section-title"><div class="icon-bg"><i class="fas fa-pen-fancy"></i></div><span>日志</span></div>
-        </div>
-
         <div class="blog-layout">
             <div class="blog-list">
                 <div class="blog-card">
@@ -247,8 +247,19 @@
 
     <script>
         function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
-        function doSearch() { const val = document.getElementById('searchInput').value; if (val.trim()) showToast(`搜索日志：${val}`); else showToast('请输入搜索关键词'); }
+        function doSearch() { const val = document.getElementById('searchInput').value; if (val.trim()) showToast(`搜索日志：${val}`); else showToast('请输入搜索关键词'); closeSearch(); }
         document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') doSearch(); });
+
+        // 搜索框展开/收起
+        const searchToggle = document.getElementById('searchToggle');
+        const searchBox = document.getElementById('searchBox');
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        function openSearch() { searchBox.classList.add('open'); searchOverlay.classList.add('show'); setTimeout(() => searchInput.focus(), 100); }
+        function closeSearch() { searchBox.classList.remove('open'); searchOverlay.classList.remove('show'); }
+        searchToggle.addEventListener('click', e => { e.stopPropagation(); openSearch(); });
+        searchOverlay.addEventListener('click', closeSearch);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSearch(); });
 
         // 图片轮播
         document.querySelectorAll('.blog-card-carousel').forEach(carousel => {
