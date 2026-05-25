@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日志 - 由由然</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f1f2f3; color: #18191c; }
+
+        .top-nav { background: #1a1a1a; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 64px; }
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .logo { font-size: 22px; font-weight: 700; color: #f97316; cursor: pointer; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .logo i { font-size: 28px; }
+        .nav-links { display: flex; gap: 18px; list-style: none; }
+        .nav-links a { text-decoration: none; color: #b0b0b0; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: #f97316; }
+        .nav-links a.active { color: #f97316; }
+        .nav-center { flex: 1; max-width: 500px; margin: 0 24px; }
+        .search-box { display: flex; align-items: center; background: #2a2a2a; border-radius: 8px; padding: 0 12px; height: 40px; border: 1px solid #444; transition: border-color 0.2s, background 0.2s; }
+        .search-box:focus-within { border-color: #f97316; background: #333; }
+        .search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: #e0e0e0; }
+        .search-box input::placeholder { color: #666; }
+        .search-box button { border: none; background: #444; color: #b0b0b0; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-left: 8px; transition: all 0.2s; }
+        .search-box button:hover { background: #f97316; color: #fff; }
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-icon-btn { position: relative; cursor: pointer; color: #b0b0b0; font-size: 20px; transition: color 0.2s; }
+        .nav-icon-btn:hover { color: #f97316; }
+        .badge { position: absolute; top: -6px; right: -8px; background: #ff6699; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 8px; font-weight: 600; }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
+
+        .banner-wrap { width: 100%; height: 180px; overflow: hidden; position: relative; }
+        .banner-slider { display: flex; height: 100%; }
+        .banner-slide { min-width: 100%; height: 100%; position: relative; }
+        .banner-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .banner-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 24px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.6)); color: #fff; }
+        .banner-title { font-size: 20px; font-weight: 600; }
+
+        .main-wrap { max-width: 1200px; margin: 20px auto; padding: 0 24px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .section-title { font-size: 22px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .section-title .icon-bg { width: 32px; height: 32px; border-radius: 8px; background: #f97316; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+        /* 博客列表 */
+        .blog-layout { display: grid; grid-template-columns: 2.5fr 1fr; gap: 24px; }
+        .blog-list { display: flex; flex-direction: column; gap: 20px; }
+        .blog-card { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #e3e5e7; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; display: flex; }
+        .blog-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .blog-card-img { width: 220px; min-height: 160px; object-fit: cover; flex-shrink: 0; }
+        .blog-card-body { padding: 20px; display: flex; flex-direction: column; }
+        .blog-card-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #18191c; }
+        .blog-card-desc { font-size: 14px; color: #61666d; line-height: 1.7; flex: 1; }
+        .blog-card-meta { display: flex; align-items: center; gap: 16px; font-size: 12px; color: #9499a0; margin-top: 12px; }
+        .blog-card-tags { display: flex; gap: 6px; margin-top: 8px; }
+        .blog-card-tags span { padding: 2px 10px; border-radius: 12px; font-size: 11px; background: #fff3e0; color: #f97316; }
+
+        /* 侧边栏 */
+        .blog-sidebar { display: flex; flex-direction: column; gap: 16px; }
+        .sidebar-card { background: #fff; border-radius: 12px; border: 1px solid #e3e5e7; padding: 20px; }
+        .sidebar-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+        .sidebar-card h3 i { color: #f97316; }
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-cloud span { padding: 4px 12px; border-radius: 14px; font-size: 12px; background: #f6f7f8; color: #61666d; cursor: pointer; transition: all 0.2s; }
+        .tag-cloud span:hover { background: #f97316; color: #fff; }
+        .hot-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f1f2f3; cursor: pointer; }
+        .hot-item:last-child { border-bottom: none; }
+        .hot-index { width: 20px; height: 20px; border-radius: 4px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: #fff; }
+        .hot-index.r1 { background: #f97316; }
+        .hot-index.r2 { background: #fb923c; }
+        .hot-index.r3 { background: #fdba74; }
+        .hot-index.rn { background: #c9cdd4; }
+        .hot-title { font-size: 13px; color: #18191c; flex: 1; }
+
+        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px); background: #2c2c2c; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 1000; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .footer { background: #fff; border-top: 1px solid #e3e5e7; margin-top: 40px; padding: 32px 24px; text-align: center; color: #9499a0; font-size: 13px; }
+        .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; }
+        .footer-links a { color: #9499a0; text-decoration: none; font-size: 13px; transition: color 0.2s; }
+        .footer-links a:hover { color: #f97316; }
+
+        @media (max-width: 768px) {
+            .blog-layout { grid-template-columns: 1fr; }
+            .blog-card { flex-direction: column; }
+            .blog-card-img { width: 100%; height: 180px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast" id="toast"></div>
+
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a class="logo" href="index.html"><svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:6px;"><circle cx="16" cy="18" r="11" fill="none" stroke="#f97316" stroke-width="2"/><line x1="16" y1="7" x2="16" y2="4" stroke="#f97316" stroke-width="2" stroke-linecap="round"/><path d="M14 5 Q16 3 18 5" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/></svg> 由由然</a>
+                <ul class="nav-links">
+                    <li><a href="index.html">主页</a></li>
+                    <li><a href="blog.html" class="active">日志</a></li>
+                    <li><a href="album.html">相册</a></li>
+                    <li><a href="guestbook.html">留言板</a></li>
+                    <li><a href="profile.html">个人档</a></li>
+                    <li><a href="more.html">更多</a></li>
+                </ul>
+            </div>
+            <div class="nav-center">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索日志..." id="searchInput">
+                    <button onclick="doSearch()"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="nav-icon-btn" onclick="showToast('消息中心')"><i class="fas fa-comment-dots"></i><span class="badge">99+</span></div>
+                <div class="nav-icon-btn" onclick="showToast('动态更新')"><i class="fas fa-bolt"></i><span class="badge">5</span></div>
+                <div class="nav-icon-btn" onclick="showToast('收藏夹')"><i class="fas fa-star"></i></div>
+                <div class="nav-icon-btn" onclick="showToast('历史记录')"><i class="fas fa-clock"></i></div>
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=bilibili" class="avatar" alt="avatar" onclick="showToast('个人中心')">
+            </div>
+        </div>
+    </nav>
+
+    <div class="banner-wrap">
+        <div class="banner-slider">
+            <div class="banner-slide">
+                <img src="images/Japanese_manga_style_action_sc_2026-05-25T11-34-07.png" alt="少年觉醒">
+                <div class="banner-overlay"><div class="banner-title">少年觉醒 · 东京夜下的异能传说</div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-wrap">
+        <div class="section-header">
+            <div class="section-title"><div class="icon-bg"><i class="fas fa-pen-fancy"></i></div><span>日志</span></div>
+        </div>
+
+        <div class="blog-layout">
+            <div class="blog-list">
+                <div class="blog-card" onclick="showToast('查看文章详情')">
+                    <img class="blog-card-img" src="https://picsum.photos/seed/blog1/440/320" alt="创作心得">
+                    <div class="blog-card-body">
+                        <div class="blog-card-title">3D打印创业半年记：从零到月入过万</div>
+                        <div class="blog-card-desc">不知不觉已经全职做3D打印电商半年了。从第一台Ender-3开始，到现在工作室里六台打印机同时运转，回头看这半年走过的路…</div>
+                        <div class="blog-card-tags"><span>3D打印</span><span>创业</span><span>复盘</span></div>
+                        <div class="blog-card-meta"><span><i class="fas fa-calendar"></i> 2025-05-20</span><span><i class="fas fa-eye"></i> 2.3k 阅读</span><span><i class="fas fa-heart"></i> 186 赞</span></div>
+                    </div>
+                </div>
+                <div class="blog-card" onclick="showToast('查看文章详情')">
+                    <img class="blog-card-img" src="https://picsum.photos/seed/blog2/440/320" alt="选品心得">
+                    <div class="blog-card-body">
+                        <div class="blog-card-title">六一儿童节3D打印玩具选品指南</div>
+                        <div class="blog-card-desc">六一马上到了，最近一直在研究适合儿童节的3D打印玩具方向。从数据来看，小恐龙、旋转陀螺、拼装模型这几类热度最高…</div>
+                        <div class="blog-card-tags"><span>选品</span><span>儿童节</span><span>电商</span></div>
+                        <div class="blog-card-meta"><span><i class="fas fa-calendar"></i> 2025-05-18</span><span><i class="fas fa-eye"></i> 1.8k 阅读</span><span><i class="fas fa-heart"></i> 142 赞</span></div>
+                    </div>
+                </div>
+                <div class="blog-card" onclick="showToast('查看文章详情')">
+                    <img class="blog-card-img" src="https://picsum.photos/seed/blog3/440/320" alt="小红书运营">
+                    <div class="blog-card-body">
+                        <div class="blog-card-title">小红书3D打印内容运营实战分享</div>
+                        <div class="blog-card-desc">做了两个月小红书，从0到5000粉，分享一下我的内容策略。关键是找到"制造过程"这个差异化切入点，配合ASMR拍摄手法…</div>
+                        <div class="blog-card-tags"><span>小红书</span><span>运营</span><span>内容创作</span></div>
+                        <div class="blog-card-meta"><span><i class="fas fa-calendar"></i> 2025-05-15</span><span><i class="fas fa-eye"></i> 3.1k 阅读</span><span><i class="fas fa-heart"></i> 257 赞</span></div>
+                    </div>
+                </div>
+                <div class="blog-card" onclick="showToast('查看文章详情')">
+                    <img class="blog-card-img" src="https://picsum.photos/seed/blog4/440/320" alt="迪迦奥特曼">
+                    <div class="blog-card-body">
+                        <div class="blog-card-title">迪迦奥特曼装饰盘——从建模到成品全记录</div>
+                        <div class="blog-card-desc">最近做了一个迪迦奥特曼主题的3D打印装饰盘，效果出乎意料的好。这篇文章记录从建模、切片参数优化到后期上色的完整流程…</div>
+                        <div class="blog-card-tags"><span>3D建模</span><span>奥特曼</span><span>教程</span></div>
+                        <div class="blog-card-meta"><span><i class="fas fa-calendar"></i> 2025-05-12</span><span><i class="fas fa-eye"></i> 4.5k 阅读</span><span><i class="fas fa-heart"></i> 398 赞</span></div>
+                    </div>
+                </div>
+                <div class="blog-card" onclick="showToast('查看文章详情')">
+                    <img class="blog-card-img" src="https://picsum.photos/seed/blog5/440/320" alt="软件推荐">
+                    <div class="blog-card-body">
+                        <div class="blog-card-title">2025年必备的5款免费3D打印软件</div>
+                        <div class="blog-card-desc">从切片软件到建模工具，整理了5款我用下来最好用的免费软件。Blender、PrusaSlicer、Tinkercad……每款都有详细评测和推荐理由。</div>
+                        <div class="blog-card-tags"><span>软件</span><span>工具推荐</span><span>免费</span></div>
+                        <div class="blog-card-meta"><span><i class="fas fa-calendar"></i> 2025-05-08</span><span><i class="fas fa-eye"></i> 5.7k 阅读</span><span><i class="fas fa-heart"></i> 512 赞</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-sidebar">
+                <div class="sidebar-card">
+                    <h3><i class="fas fa-tags"></i> 热门标签</h3>
+                    <div class="tag-cloud">
+                        <span>3D打印</span><span>创业</span><span>POD</span><span>小红书</span>
+                        <span>选品</span><span>建模</span><span>电商</span><span>玩具</span>
+                        <span>教程</span><span>运营</span><span>软件</span><span>复盘</span>
+                    </div>
+                </div>
+                <div class="sidebar-card">
+                    <h3><i class="fas fa-fire"></i> 热门文章</h3>
+                    <div class="hot-item" onclick="showToast('查看文章')">
+                        <div class="hot-index r1">1</div><div class="hot-title">2025必备免费3D打印软件</div>
+                    </div>
+                    <div class="hot-item" onclick="showToast('查看文章')">
+                        <div class="hot-index r2">2</div><div class="hot-title">迪迦奥特曼装饰盘全记录</div>
+                    </div>
+                    <div class="hot-item" onclick="showToast('查看文章')">
+                        <div class="hot-index r3">3</div><div class="hot-title">小红书内容运营实战分享</div>
+                    </div>
+                    <div class="hot-item" onclick="showToast('查看文章')">
+                        <div class="hot-index rn">4</div><div class="hot-title">3D打印创业半年记</div>
+                    </div>
+                    <div class="hot-item" onclick="showToast('查看文章')">
+                        <div class="hot-index rn">5</div><div class="hot-title">六一儿童节选品指南</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#" onclick="showToast('关于我们')">关于我们</a>
+            <a href="#" onclick="showToast('联系我们')">联系我们</a>
+            <a href="#" onclick="showToast('用户协议')">用户协议</a>
+            <a href="#" onclick="showToast('隐私政策')">隐私政策</a>
+            <a href="#" onclick="showToast('帮助中心')">帮助中心</a>
+            <a href="#" onclick="showToast('侵权申诉')">侵权申诉</a>
+        </div>
+    </footer>
+
+    <script>
+        function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+        function doSearch() { const val = document.getElementById('searchInput').value; if (val.trim()) showToast(`搜索日志：${val}`); else showToast('请输入搜索关键词'); }
+        document.getElementById('searchInput').addEventListener('keypress', e => { if (e.key === 'Enter') doSearch(); });
+    </script>
+</body>
+</html>

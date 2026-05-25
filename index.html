@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>由由然 - 干杯~</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f1f2f3; color: #18191c; }
+
+        /* 顶部导航栏 */
+        .top-nav { background: #1a1a1a; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 64px; }
+        .nav-left { display: flex; align-items: center; gap: 20px; }
+        .logo { font-size: 22px; font-weight: 700; color: #f97316; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .logo i { font-size: 28px; }
+        .nav-links { display: flex; gap: 18px; list-style: none; }
+        .nav-links a { text-decoration: none; color: #b0b0b0; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: #f97316; }
+
+        .nav-center { flex: 1; max-width: 500px; margin: 0 24px; }
+        .search-box { display: flex; align-items: center; background: #2a2a2a; border-radius: 8px; padding: 0 12px; height: 40px; border: 1px solid #444; transition: border-color 0.2s, background 0.2s; }
+        .search-box:focus-within { border-color: #f97316; background: #333; }
+        .search-box input { border: none; background: transparent; outline: none; flex: 1; font-size: 14px; color: #e0e0e0; }
+        .search-box input::placeholder { color: #666; }
+        .search-box button { border: none; background: #444; color: #b0b0b0; padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; margin-left: 8px; transition: all 0.2s; }
+        .search-box button:hover { background: #f97316; color: #fff; }
+
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+        .nav-icon-btn { position: relative; cursor: pointer; color: #b0b0b0; font-size: 20px; transition: color 0.2s; }
+        .nav-icon-btn:hover { color: #f97316; }
+        .badge { position: absolute; top: -6px; right: -8px; background: #ff6699; color: #fff; font-size: 10px; padding: 1px 5px; border-radius: 8px; font-weight: 600; }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s; }
+        .avatar:hover { border-color: #00aeec; }
+        .upload-btn { background: #fb7299; color: #fff; border: none; padding: 8px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+        .upload-btn:hover { background: #fc8bab; }
+
+        /* Banner */
+        .banner-wrap { width: 100%; height: 180px; overflow: hidden; position: relative; }
+        .banner-slider { display: flex; transition: transform 0.5s ease; height: 100%; }
+        .banner-slide { min-width: 100%; height: 100%; position: relative; }
+        .banner-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .banner-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 24px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.6)); color: #fff; }
+        .banner-title { font-size: 20px; font-weight: 600; }
+        .banner-dots { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; transition: all 0.2s; }
+        .dot.active { background: #fff; width: 20px; border-radius: 4px; }
+
+        /* 二级分类 */
+        .category-bar { background: #fff; border-bottom: 1px solid #e3e5e7; }
+        .category-container { max-width: 1400px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 8px; }
+        .category-item { padding: 6px 14px; border-radius: 6px; font-size: 13px; color: #61666d; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .category-item:hover { color: #00aeec; background: #e8f6fc; }
+        .category-item.active { background: #00aeec; color: #fff; }
+        .category-divider { width: 1px; height: 18px; background: #e3e5e7; margin: 0 6px; }
+
+        /* 主内容区 */
+        .main-wrap { max-width: 1400px; margin: 20px auto; padding: 0 24px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .section-title { font-size: 22px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .section-title .icon-bg { width: 32px; height: 32px; border-radius: 8px; background: #ff6699; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .more-link { font-size: 13px; color: #9499a0; cursor: pointer; transition: color 0.2s; }
+        .more-link:hover { color: #00aeec; }
+
+        /* 热门区域：左侧大图 + 右侧小图 */
+        .hot-section { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-bottom: 32px; }
+        .hot-main { position: relative; border-radius: 12px; overflow: hidden; cursor: pointer; height: 100%; }
+        .hot-main img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .hot-main:hover img { transform: scale(1.03); }
+        .hot-main-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 16px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.7)); color: #fff; }
+        .hot-main-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+        .hot-main-meta { font-size: 12px; color: rgba(255,255,255,0.8); }
+        .hot-badge { position: absolute; top: 12px; left: 12px; background: #ff6699; color: #fff; font-size: 12px; padding: 3px 10px; border-radius: 4px; font-weight: 500; }
+
+        .hot-side { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .side-card { background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #e3e5e7; transition: box-shadow 0.2s; }
+        .side-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+        .side-thumb { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+        .side-info { padding: 10px 12px; }
+        .side-title { font-size: 13px; font-weight: 500; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .side-meta { display: flex; align-items: center; gap: 10px; margin-top: 6px; font-size: 12px; color: #9499a0; }
+
+        /* 视频网格 */
+        .video-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+        .video-card { background: #fff; border-radius: 10px; overflow: hidden; cursor: pointer; border: 1px solid #e3e5e7; transition: transform 0.2s, box-shadow 0.2s; }
+        .video-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .video-thumb-wrap { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+        .video-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .video-card:hover .video-thumb-wrap img { transform: scale(1.06); }
+        .video-duration { position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; font-size: 11px; padding: 2px 6px; border-radius: 4px; }
+        .video-stats-overlay { position: absolute; bottom: 6px; left: 6px; display: flex; gap: 10px; font-size: 11px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+        .video-info { padding: 10px 12px 14px; }
+        .video-title { font-size: 14px; font-weight: 500; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 8px; }
+        .video-up { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #9499a0; }
+        .video-up img { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+        .video-up a { color: #9499a0; text-decoration: none; transition: color 0.2s; }
+        .video-up a:hover { color: #00aeec; }
+
+        /* 标签栏下方操作区 */
+        .action-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding: 12px 16px; background: #fff; border-radius: 10px; border: 1px solid #e3e5e7; }
+        .action-btn { display: flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; border: 1px solid #e3e5e7; background: #fff; color: #61666d; }
+        .action-btn:hover { background: #e8f6fc; color: #00aeec; border-color: #00aeec; }
+        .action-btn i { font-size: 14px; }
+        .action-btn.primary { background: #00aeec; color: #fff; border-color: #00aeec; }
+        .action-btn.primary:hover { background: #33bef1; }
+        .action-btn.danger { background: #ff6699; color: #fff; border-color: #ff6699; }
+        .action-btn.danger:hover { background: #ff85ad; }
+
+        /* Toast 提示 */
+        .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(100px); background: #2c2c2c; color: #fff; padding: 12px 24px; border-radius: 8px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 1000; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* 弹窗 */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 200; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #fff; border-radius: 16px; padding: 28px; max-width: 420px; width: 90%; text-align: center; animation: modalIn 0.3s ease; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .modal-icon { font-size: 48px; margin-bottom: 12px; }
+        .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+        .modal-desc { font-size: 14px; color: #9499a0; margin-bottom: 20px; }
+        .modal-btns { display: flex; gap: 12px; justify-content: center; }
+        .modal-btn { padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.2s; }
+        .modal-btn.confirm { background: #00aeec; color: #fff; }
+        .modal-btn.confirm:hover { background: #33bef1; }
+        .modal-btn.cancel { background: #f1f2f3; color: #61666d; }
+        .modal-btn.cancel:hover { background: #e3e5e7; }
+
+        /* 底部 */
+        .footer { background: #fff; border-top: 1px solid #e3e5e7; margin-top: 40px; padding: 32px 24px; text-align: center; color: #9499a0; font-size: 13px; }
+        .footer-links { display: flex; justify-content: center; gap: 24px; margin-bottom: 12px; }
+        .footer-links a { color: #9499a0; text-decoration: none; font-size: 13px; transition: color 0.2s; }
+        .footer-links a:hover { color: #f97316; }
+
+        @media (max-width: 1200px) { .video-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 992px) { .video-grid { grid-template-columns: repeat(3, 1fr); } .hot-section { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .video-grid { grid-template-columns: repeat(2, 1fr); } .nav-links { display: none; } .nav-center { margin: 0 12px; } }
+    </style>
+</head>
+<body>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-icon" id="modalIcon">🎉</div>
+            <div class="modal-title" id="modalTitle">提示</div>
+            <div class="modal-desc" id="modalDesc">你点击了一个按钮</div>
+            <div class="modal-btns">
+                <button class="modal-btn cancel" onclick="closeModal()">取消</button>
+                <button class="modal-btn confirm" onclick="closeModal()">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顶部导航 -->
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo" onclick="showToast('欢迎来到由由然~')"><svg viewBox="0 0 32 32" width="28" height="28" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:6px;"><circle cx="16" cy="18" r="11" fill="none" stroke="#f97316" stroke-width="2"/><line x1="16" y1="7" x2="16" y2="4" stroke="#f97316" stroke-width="2" stroke-linecap="round"/><path d="M14 5 Q16 3 18 5" fill="none" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/></svg> 由由然</div>
+                <ul class="nav-links">
+                    <li><a href="index.html" style="color:#f97316;">主页</a></li>
+                    <li><a href="blog.html">日志</a></li>
+                    <li><a href="album.html">相册</a></li>
+                    <li><a href="guestbook.html">留言板</a></li>
+                    <li><a href="profile.html">个人档</a></li>
+                    <li><a href="more.html">更多</a></li>
+                </ul>
+            </div>
+            <div class="nav-center">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索视频、UP主、番剧..." id="searchInput">
+                    <button onclick="doSearch()"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="nav-icon-btn" onclick="showToast('消息中心')">
+                    <i class="fas fa-comment-dots"></i>
+                    <span class="badge">99+</span>
+                </div>
+                <div class="nav-icon-btn" onclick="showToast('动态更新')">
+                    <i class="fas fa-bolt"></i>
+                    <span class="badge">5</span>
+                </div>
+                <div class="nav-icon-btn" onclick="showToast('收藏夹')">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="nav-icon-btn" onclick="showToast('历史记录')">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=bilibili" class="avatar" alt="avatar" onclick="showModal('👤', '个人中心', '登录后可查看个人资料、历史记录和收藏内容。')">
+                <button class="upload-btn" onclick="showModal('📤', '投稿', '选择要上传的视频文件，支持mp4、flv、avi格式。')">
+                    <i class="fas fa-upload"></i> 投稿
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Banner -->
+    <div class="banner-wrap">
+        <div class="banner-slider" id="bannerSlider">
+            <div class="banner-slide">
+                <img src="images/Japanese_manga_style_action_sc_2026-05-25T11-34-07.png" alt="少年觉醒">
+                <div class="banner-overlay">
+                    <div class="banner-title">少年觉醒 · 东京夜下的异能传说</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分类 -->
+    <div class="category-bar">
+        <div class="category-container">
+            <span class="category-item active" onclick="switchCategory(this, '热门')">热门</span>
+            <span class="category-item" onclick="switchCategory(this, '番剧')">番剧</span>
+            <span class="category-item" onclick="switchCategory(this, '国创')">国创</span>
+            <span class="category-item" onclick="switchCategory(this, '综艺')">综艺</span>
+            <span class="category-item" onclick="switchCategory(this, '动画')">动画</span>
+            <span class="category-item" onclick="switchCategory(this, '鬼畜')">鬼畜</span>
+            <span class="category-item" onclick="switchCategory(this, '舞蹈')">舞蹈</span>
+            <span class="category-item" onclick="switchCategory(this, '娱乐')">娱乐</span>
+            <span class="category-item" onclick="switchCategory(this, '科技')">科技数码</span>
+            <span class="category-item" onclick="switchCategory(this, '美食')">美食</span>
+            <span class="category-item" onclick="switchCategory(this, '汽车')">汽车</span>
+            <span class="category-item" onclick="switchCategory(this, '运动')">体育运动</span>
+            <span class="category-item" onclick="switchCategory(this, 'Vlog')">Vlog</span>
+            <span class="category-divider"></span>
+            <span class="category-item" onclick="switchCategory(this, '专栏')">专栏</span>
+            <span class="category-item" onclick="switchCategory(this, '活动')">活动</span>
+            <span class="category-item" onclick="switchCategory(this, '社区')">社区中心</span>
+        </div>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-wrap">
+
+        <!-- 操作栏 -->
+        <div class="action-bar">
+            <button class="action-btn primary" onclick="refreshSideCards()">
+                <i class="fas fa-sync-alt"></i> 换一换
+            </button>
+            <button class="action-btn" onclick="showToast('已订阅该频道')">
+                <i class="fas fa-bell"></i> 订阅
+            </button>
+            <button class="action-btn" onclick="showToast('已添加到稍后再看')">
+                <i class="fas fa-bookmark"></i> 稍后再看
+            </button>
+            <button class="action-btn" onclick="showToast('播放全部')">
+                <i class="fas fa-play-circle"></i> 播放全部
+            </button>
+
+        </div>
+
+        <div class="hot-section">
+            <div class="hot-main" onclick="playVideo('AI创作营首发现场')">
+                <img src="images/epic_ninja_warrior_running_on__2026-05-25T11-27-38.png" alt="忍者必须死3">
+                <span class="hot-badge">推荐</span>
+                <div class="hot-main-info">
+                    <div class="hot-main-title">忍者必须死3：史诗级跑酷战斗，暗夜中穿梭的忍者传奇</div>
+                    <div class="hot-main-meta">269.3万观看 · 2小时前</div>
+                </div>
+            </div>
+            <div class="hot-side" id="hotSide">
+                <div class="side-card" onclick="playVideo('原神：风起璃月')">
+                    <img class="side-thumb" src="images/beautiful_fantasy_anime_game_l_2026-05-25T11-27-27.png" alt="">
+                    <div class="side-info">
+                        <div class="side-title">【原神】踏上星辰与大海的旅途，探索提瓦特大陆的每一处秘境</div>
+                        <div class="side-meta"><span><i class="fas fa-play" style="font-size:10px"></i> 326.6万</span><span><i class="fas fa-comment" style="font-size:10px"></i> 2.4万</span></div>
+                    </div>
+                </div>
+                <div class="side-card" onclick="playVideo('原神：神樱树下')">
+                    <img class="side-thumb" src="images/fantasy_anime_game_landscape_w_2026-05-25T11-28-16.png" alt="">
+                    <div class="side-info">
+                        <div class="side-title">【原神】神樱树下许愿，绝美风景让你忘记所有烦恼</div>
+                        <div class="side-meta"><span><i class="fas fa-play" style="font-size:10px"></i> 189.0万</span><span><i class="fas fa-comment" style="font-size:10px"></i> 1.2万</span></div>
+                    </div>
+                </div>
+                <div class="side-card" onclick="playVideo('原神：秘境探索')">
+                    <img class="side-thumb" src="images/fantasy_anime_game_landscape_w_2026-05-25T11-28-26.png" alt="">
+                    <div class="side-info">
+                        <div class="side-title">【原神】七国探索全记录，每一帧都是壁纸级别的仙境画面</div>
+                        <div class="side-meta"><span><i class="fas fa-play" style="font-size:10px"></i> 421.8万</span><span><i class="fas fa-comment" style="font-size:10px"></i> 3.9万</span></div>
+                    </div>
+                </div>
+                <div class="side-card" onclick="playVideo('原神：星夜之旅')">
+                    <img class="side-thumb" src="images/fantasy_anime_game_landscape_w_2026-05-25T11-29-32.png" alt="">
+                    <div class="side-info">
+                        <div class="side-title">【原神】夜空中最亮的星，陪你走过提瓦特的每一个温柔瞬间</div>
+                        <div class="side-meta"><span><i class="fas fa-play" style="font-size:10px"></i> 158.2万</span><span><i class="fas fa-comment" style="font-size:10px"></i> 8746</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#" onclick="showToast('关于我们')">关于我们</a>
+            <a href="#" onclick="showToast('联系我们')">联系我们</a>
+            <a href="#" onclick="showToast('用户协议')">用户协议</a>
+            <a href="#" onclick="showToast('隐私政策')">隐私政策</a>
+            <a href="#" onclick="showToast('帮助中心')">帮助中心</a>
+            <a href="#" onclick="showToast('侵权申诉')">侵权申诉</a>
+        </div>
+    </footer>
+
+    <script>
+        // Toast
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        // Modal
+        function showModal(icon, title, desc) {
+            document.getElementById('modalIcon').textContent = icon;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalDesc').textContent = desc;
+            document.getElementById('modal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+        document.getElementById('modal').addEventListener('click', e => {
+            if (e.target === document.getElementById('modal')) closeModal();
+        });
+
+        // 搜索
+        function doSearch() {
+            const val = document.getElementById('searchInput').value;
+            if (val.trim()) showToast(`搜索：${val}`);
+            else showToast('请输入搜索关键词');
+        }
+        document.getElementById('searchInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') doSearch();
+        });
+
+        // 分类切换
+        function switchCategory(el, name) {
+            document.querySelectorAll('.category-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            showToast(`已切换到：${name}`);
+        }
+
+        // 播放视频
+        function playVideo(title) {
+            showModal('▶️', '开始播放', `正在播放：${title}`);
+        }
+
+        // 刷新侧边卡片
+        function refreshSideCards() {
+            const sideCards = document.querySelectorAll('.side-card');
+            sideCards.forEach((card) => {
+                const img = card.querySelector('img');
+                const seed = Math.random().toString(36).slice(2, 8);
+                img.src = `https://picsum.photos/seed/${seed}/400/250`;
+            });
+            showToast('内容已刷新！');
+        }
+    </script>
+</body>
+</html>
