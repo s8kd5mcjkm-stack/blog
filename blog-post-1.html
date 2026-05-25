@@ -42,28 +42,33 @@
 
         .article-card { background: #fff; border-radius: 16px; border: 1px solid #e3e5e7; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
 
-        /* 顶部双图并排 */
-        .hero-images { display: grid; grid-template-columns: 1fr 1fr; gap: 0; position: relative; }
-        .hero-images .hero-img-wrap { position: relative; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; }
-        .hero-images .hero-img-wrap:first-child { border-right: 2px solid #fff; }
+        /* 左图右文 50/50 布局 */
+        .article-layout { display: flex; }
+        .article-layout-left { width: 50%; flex-shrink: 0; }
+        .article-layout-right { width: 50%; flex-shrink: 0; display: flex; flex-direction: column; }
+
+        /* 左侧图片 */
+        .hero-images { display: flex; flex-direction: column; height: 100%; position: relative; }
+        .hero-images .hero-img-wrap { position: relative; overflow: hidden; flex: 1; cursor: pointer; }
+        .hero-images .hero-img-wrap:first-child { border-bottom: 2px solid #fff; }
         .hero-images img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
         .hero-images .hero-img-wrap:hover img { transform: scale(1.05); }
         .hero-images .hero-img-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 40px 20px 16px; background: linear-gradient(transparent, rgba(0,0,0,0.45)); opacity: 0; transition: opacity 0.3s; display: flex; align-items: flex-end; }
         .hero-images .hero-img-wrap:hover .hero-img-overlay { opacity: 1; }
         .hero-img-overlay span { color: #fff; font-size: 12px; padding: 4px 10px; background: rgba(255,255,255,0.2); border-radius: 12px; backdrop-filter: blur(4px); }
-        .photo-count { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.55); color: #fff; font-size: 12px; padding: 5px 12px; border-radius: 14px; z-index: 2; backdrop-filter: blur(6px); display: flex; align-items: center; gap: 5px; }
+        .photo-count { position: absolute; top: 16px; left: 16px; background: rgba(0,0,0,0.55); color: #fff; font-size: 12px; padding: 5px 12px; border-radius: 14px; z-index: 2; backdrop-filter: blur(6px); display: flex; align-items: center; gap: 5px; }
 
-        .article-header { padding: 28px 36px 20px; border-bottom: 1px solid #f1f2f3; }
-        .article-header h1 { font-size: 26px; font-weight: 700; line-height: 1.4; margin-bottom: 14px; color: #18191c; letter-spacing: -0.3px; }
-        .article-meta-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; font-size: 13px; color: #9499a0; }
+        .article-header { padding: 28px 32px 20px; border-bottom: 1px solid #f1f2f3; }
+        .article-header h1 { font-size: 24px; font-weight: 700; line-height: 1.4; margin-bottom: 14px; color: #18191c; letter-spacing: -0.3px; }
+        .article-meta-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 13px; color: #9499a0; }
         .article-meta-row span { display: flex; align-items: center; gap: 5px; }
         .article-meta-row i { font-size: 13px; }
         .source-tag { padding: 3px 10px; border-radius: 10px; background: linear-gradient(135deg, #fff3e0, #ffedd5); color: #f97316; font-size: 12px; font-weight: 500; }
-        .article-tags { display: flex; gap: 8px; margin-top: 12px; }
-        .article-tags a { padding: 4px 14px; border-radius: 14px; font-size: 12px; background: #f6f7f8; color: #61666d; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; }
+        .article-tags { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+        .article-tags a { padding: 4px 12px; border-radius: 14px; font-size: 12px; background: #f6f7f8; color: #61666d; text-decoration: none; transition: all 0.2s; border: 1px solid transparent; }
         .article-tags a:hover { background: #fff7ed; color: #f97316; border-color: #fed7aa; }
 
-        .article-body { padding: 28px 36px 32px; }
+        .article-body { padding: 20px 32px 24px; flex: 1; }
         .article-body p { font-size: 15px; line-height: 1.85; color: #444; margin-bottom: 18px; }
         .article-body .highlight-text { font-size: 22px; font-weight: 700; color: #f97316; text-align: center; padding: 28px 20px; background: linear-gradient(135deg, #fff7ed, #fff1f2); border-radius: 14px; margin: 16px 0 24px; line-height: 1.8; letter-spacing: 1px; position: relative; overflow: hidden; }
         .article-body .highlight-text::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(249,115,22,0.06) 0%, transparent 70%); animation: pulse-bg 3s ease-in-out infinite; }
@@ -112,12 +117,13 @@
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
         @media (max-width: 768px) {
+            .article-layout { flex-direction: column; }
+            .article-layout-left, .article-layout-right { width: 100%; }
+            .hero-images { flex-direction: row; height: 240px; }
+            .hero-images .hero-img-wrap:first-child { border-bottom: none; border-right: 2px solid #fff; }
             .article-header { padding: 20px 18px 16px; }
             .article-header h1 { font-size: 20px; }
             .article-body { padding: 18px; }
-            .img-gallery { grid-template-columns: 1fr; }
-            .hero-images { grid-template-columns: 1fr; }
-            .hero-images .hero-img-wrap:first-child { border-right: none; border-bottom: 2px solid #fff; }
             .nav-links { display: none; }
             .related-grid { grid-template-columns: 1fr; }
         }
@@ -175,42 +181,46 @@
         <a href="blog.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回日志列表</a>
 
         <div class="article-card">
-            <!-- 顶部双图并排 -->
-            <div class="hero-images" id="heroImages">
-                <div class="photo-count"><i class="fas fa-images"></i> 2 张图片</div>
-                <div class="hero-img-wrap" onclick="openLightbox(0)">
-                    <img src="images/xhs_hotspring_1.png" alt="黎深温泉键帽 - 图1">
-                    <div class="hero-img-overlay"><span><i class="fas fa-search-plus"></i> 点击放大</span></div>
+            <div class="article-layout">
+                <!-- 左侧：图片（占一半） -->
+                <div class="article-layout-left">
+                    <div class="hero-images" id="heroImages">
+                        <div class="photo-count"><i class="fas fa-images"></i> 2 张图片</div>
+                        <div class="hero-img-wrap" onclick="openLightbox(0)">
+                            <img src="images/xhs_hotspring_1.png" alt="黎深温泉键帽 - 图1">
+                            <div class="hero-img-overlay"><span><i class="fas fa-search-plus"></i> 点击放大</span></div>
+                        </div>
+                        <div class="hero-img-wrap" onclick="openLightbox(1)">
+                            <img src="images/xhs_hotspring_2.png" alt="黎深温泉键帽 - 图2">
+                            <div class="hero-img-overlay"><span><i class="fas fa-search-plus"></i> 点击放大</span></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="hero-img-wrap" onclick="openLightbox(1)">
-                    <img src="images/xhs_hotspring_2.png" alt="黎深温泉键帽 - 图2">
-                    <div class="hero-img-overlay"><span><i class="fas fa-search-plus"></i> 点击放大</span></div>
+                <!-- 右侧：标题+正文（占一半） -->
+                <div class="article-layout-right">
+                    <div class="article-header">
+                        <h1>四舍五入也是先泡上温泉了</h1>
+                        <div class="article-meta-row">
+                            <span><i class="fas fa-user-circle"></i> <strong>小茉黎💙</strong></span>
+                            <span class="source-tag"><i class="fas fa-retweet"></i> 转自小红书</span>
+                            <span><i class="fas fa-calendar"></i> 2025年4月28日</span>
+                            <span><i class="fas fa-map-marker-alt"></i> 四川</span>
+                        </div>
+                    </div>
+
+                    <div class="article-body">
+                        <p>这是一篇关于<strong>黎深 × 键帽</strong> 主题的激动分享。博主晒出了自己定制的<strong>恋与深空</strong>角色黎深主题键帽，四舍五入，也算是先泡上温泉了！</p>
+
+                        <p>精致的键帽设计搭配温泉主题氛围，黎深元素的细节刻画让人一秒心动。键帽配色温柔治愈，仿佛置身氤氲温泉中，为桌面增添一抹浪漫色彩。</p>
+
+                        <div class="article-tags">
+                            <a href="#">#黎深</a>
+                            <a href="#">#恋与深空</a>
+                            <a href="#">#渴慕与浮沉</a>
+                            <a href="#">#键帽分享</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <div class="article-header">
-                <h1>四舍五入也是先泡上温泉了</h1>
-                <div class="article-meta-row">
-                    <span><i class="fas fa-user-circle"></i> <strong>小茉黎💙</strong></span>
-                    <span class="source-tag"><i class="fas fa-retweet"></i> 转自小红书</span>
-                    <span><i class="fas fa-calendar"></i> 2025年4月28日</span>
-                    <span><i class="fas fa-map-marker-alt"></i> 四川</span>
-                </div>
-            </div>
-
-            <div class="article-body">
-                <p>这是一篇关于<strong>黎深 × 键帽</strong> 主题的激动分享。博主晒出了自己定制的<strong>恋与深空</strong>角色黎深主题键帽，四舍五入，也算是先泡上温泉了！</p>
-
-                <p>精致的键帽设计搭配温泉主题氛围，黎深元素的细节刻画让人一秒心动。键帽配色温柔治愈，仿佛置身氤氲温泉中，为桌面增添一抹浪漫色彩。</p>
-
-                <div class="article-tags">
-                    <a href="#">#黎深</a>
-                    <a href="#">#恋与深空</a>
-                    <a href="#">#渴慕与浮沉</a>
-                    <a href="#">#键帽分享</a>
-                </div>
-
-
             </div>
 
             <div class="article-footer">
@@ -264,7 +274,7 @@
     <script>
         function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
 
-        const galleryImgs = Array.from(document.querySelectorAll('.hero-images .hero-img-wrap img'));
+        const galleryImgs = Array.from(document.querySelectorAll('.article-layout-left .hero-images .hero-img-wrap img'));
         let currentImgIdx = 0;
 
         function openLightbox(idx) {
